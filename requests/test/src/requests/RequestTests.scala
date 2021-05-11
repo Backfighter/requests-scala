@@ -102,6 +102,8 @@ object RequestTests extends TestSuite{
         s.get("https://httpbin.org/cookies/set?freeform=test")
         val res2 = s.get("https://httpbin.org/cookies").text().trim
         assert(read(res2) == Obj("cookies" -> Obj("freeform" -> "test", "hello" -> "world")))
+        val res3 = s.get("https://httpbin.org/cookies/delete?freeform").text().trim
+        assert(read(res3) == Obj("cookies" -> Obj("hello" -> "world")))
       }
       test("raw"){
         val res1 = requests.get("https://httpbin.org/cookies").text().trim

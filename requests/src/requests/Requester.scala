@@ -286,10 +286,14 @@ case class Requester(verb: String,
           if (sess.persistCookies) {
             headerFields
               .get("set-cookie")
-              .iterator
+              .toSeq
               .flatten
               .flatMap(HttpCookie.parse(_).asScala)
-              .foreach(c => sess.cookies(c.getName) = c)
+              // Expired cookies first so they don't override new ones
+              .sortBy(_.hasExpired)(Ordering[Boolean].reverse)
+              .foreach(c =>
+                sess.cookies(c.getName) = c
+              )
           }
         }
 
